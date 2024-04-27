@@ -1,10 +1,11 @@
 package com.javaweb.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.javaweb.DTO.BuildingDTO;
-import com.javaweb.repository.entity.BuildingEntity;
 
 public interface BuildingService {
-	List<BuildingDTO> findAll(String name, Long numberOfBasement);
+	List<BuildingDTO> getAllBuilding();
+	List<BuildingDTO> searchBuilding(Map<String, Object> params, List<String> code);
 }
