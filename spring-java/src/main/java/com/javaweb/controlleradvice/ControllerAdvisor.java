@@ -1,4 +1,4 @@
-package com.javaweb.controlleradivce;
+package com.javaweb.controlleradvice;
 
 import java.util.ArrayList;
 import java.util.List;
