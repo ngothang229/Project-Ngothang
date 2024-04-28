@@ -18,7 +18,7 @@ public class BuildingRentTypeRepositoryImpl implements BuildingRentTypeRepositor
 	@Override
 	public List<BuildingRentType> getBuildingRentTypeByBuildingId(Long id) {
 		
-		String sql = "SELECT * FROM buildingrenttype WHERE id = ?";
+		String sql = "SELECT * FROM buildingrenttype WHERE buildingid = ?";
 		List<BuildingRentType> result = new ArrayList<BuildingRentType>();
 		try {
 			Connection conn = ConnectionUtils.getConnection();

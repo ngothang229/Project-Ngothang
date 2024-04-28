@@ -9,6 +9,7 @@ public class BuildingDTO {
 	private String managerName;
 	private String managerPhoneNumber;
 	private String rentArea;
+	private String rentType;
 	private String serviceFee;
 	
 	public int getFloorarea() {
@@ -59,6 +60,14 @@ public class BuildingDTO {
 	public void setServiceFee(String serviceFee) {
 		this.serviceFee = serviceFee;
 	}
+	public String getRentType() {
+		return rentType;
+	}
+	public void setRentType(String rentType) {
+		this.rentType = rentType;
+	}
+	
+	
 	
 	
 	
