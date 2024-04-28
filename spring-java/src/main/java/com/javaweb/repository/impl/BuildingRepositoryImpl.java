@@ -60,15 +60,14 @@ public class BuildingRepositoryImpl implements BuildingRepository {
 		String rentAreaFrom = (String) params.get("areaFrom");
 		String rentAreaTo = (String) params.get("areaTo");
 		if (rentAreaFrom != null && !rentAreaFrom.equals("") || rentAreaTo != null && rentAreaTo.equals("")) {
-			sql.append(" JOIN rentarea r ON r.buildingid = b.id ");
+			sql.append(" JOIN rentarea ON rentarea.buildingid = building.id ");
 		}
 		String staffId = (String) params.get("staffId");
 		if (staffId != null && !staffId.equals("")) {
-			sql.append("JOIN assignmentbuilding asm  ON asm.buildingid = b.id ");
+			sql.append("JOIN assignmentbuilding ON assignmentbuilding.buildingid = building.id ");
 		}
 		if (code != null && !code.isEmpty()) {
-			sql.append(
-					" JOIN buildingrenttype brt ON b.id = brt.buildingid JOIN renttype rt ON brt.renttypeid = rt.id");
+			sql.append(" JOIN buildingrenttype brt ON b.id = brt.buildingid JOIN renttype rt ON brt.renttypeid = rt.id");
 		}
 
 	}
@@ -89,12 +88,53 @@ public class BuildingRepositoryImpl implements BuildingRepository {
 		}
 	}
 
+	public void queryWhereSpecial(Map<String, Object> params, List<String> code, StringBuilder where) {
+		String staffId = (String) params.get("staffId");
+		if (StringUtitls.checkString(staffId)) {
+			where.append(" AND asm.staffid = " + staffId);
+		}
+		String rentAreaFrom = (String) params.get("areaFrom");
+		String rentAreaTo = (String) params.get("areaTo");
+		if (StringUtitls.checkString(rentAreaFrom)) {
+			where.append(" AND r.value >= " + rentAreaFrom);
+		}
+		if (StringUtitls.checkString(rentAreaTo)) {
+			where.append(" AND r.value <= " + rentAreaTo);
+		}
+		String rentPriceFrom = (String) params.get("rentPriceFrom");
+		String rentPriceTo = (String) params.get("rentPriceTo");
+		if (StringUtitls.checkString(rentPriceFrom)) {
+			where.append(" AND r.value >= " + rentPriceFrom);
+		}
+		if (StringUtitls.checkString(rentPriceTo)) {
+			where.append(" AND r.value <= " + rentPriceTo);
+		}
+		if (params.containsKey("code")) {
+			if (code != null && !code.isEmpty()) {
+				where.append(" AND rt.code IN ( ");
+				for (int i = 0; i < code.size(); i++) {
+					where.append("'" + code.get(i) + "'");
+					if(i < code.size() -1) {
+						where.append(", ");
+					}
+				}
+				where.append(") ");
+			}
+
+		}
+
+	}
+
 	@Override
 	public List<Building> searchBuilding(Map<String, Object> params, List<String> code) {
-		StringBuilder sql = new StringBuilder("SELECT DISTINCT building.*\r\n" + "FROM building b\r\n");
-		StringBuilder where = new StringBuilder("WHERE 1 = 1 ");
+		StringBuilder sql = new StringBuilder("SELECT DISTINCT b.* FROM building b");
 		queryJoin(params, code, sql);
+		StringBuilder where = new StringBuilder(" WHERE 1 = 1 ");
+		
 		queryWhereNomal(params, where);
+		queryWhereSpecial(params, code, where);
+		sql.append(where);
+		System.out.println(sql);
 		List<Building> list = new ArrayList<>();
 		try {
 			Connection conn = ConnectionUtils.getConnection();

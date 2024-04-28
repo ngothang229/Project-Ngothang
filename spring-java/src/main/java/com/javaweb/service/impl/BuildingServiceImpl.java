@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.javaweb.DTO.BuildingDTO;
+import com.javaweb.repository.BuildingRentTypeRepository;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.DistrictRepository;
 import com.javaweb.repository.RentAreaRepository;
+import com.javaweb.repository.RentTypeRepository;
 import com.javaweb.repository.Entity.Building;
+import com.javaweb.repository.Entity.BuildingRentType;
 import com.javaweb.repository.Entity.District;
 import com.javaweb.repository.Entity.RentArea;
 import com.javaweb.service.BuildingService;
@@ -25,6 +28,10 @@ public class BuildingServiceImpl implements BuildingService {
 	private DistrictRepository districtRepository;
 	@Autowired
 	private RentAreaRepository rentAreaRepository;
+	@Autowired
+	private BuildingRentTypeRepository buildingRentTypeRepository;
+	@Autowired
+	private RentTypeRepository rentTypeRepository;
 
 	@Override
 	public List<BuildingDTO> getAllBuilding() {
@@ -80,6 +87,15 @@ public class BuildingServiceImpl implements BuildingService {
 				}
 				rentArea += area.getValue();
 			}
+			List<BuildingRentType> listBuildingRentType = buildingRentTypeRepository.getBuildingRentTypeByBuildingId(buildingId);
+			String rentType = "";
+			for (BuildingRentType buildingRentType : listBuildingRentType) {
+				if (!rentType.equals("")) {
+					rentType += ", ";
+				}
+				rentType += rentTypeRepository.getRentTypeById(buildingRentType.getRentTypeId()).getName();
+			}
+			bDTO.setRentType(rentType);
 			bDTO.setRentArea(rentArea);
 			bDTO.setServiceFee(item.getServiceFee());
 			result.add(bDTO);
